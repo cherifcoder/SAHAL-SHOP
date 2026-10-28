@@ -11,7 +11,7 @@ router.get('/login', isGuest, (req, res) => {
 router.post('/login', isGuest, async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username: username.trim() });
     
     if (!user) {
       return res.render('auth/login', { title: 'Connexion', error: 'Identifiants incorrects' });
