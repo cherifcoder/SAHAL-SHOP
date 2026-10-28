@@ -2,12 +2,24 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs-extra');
 
+const isVercel = !!process.env.VERCEL || process.env.NODE_ENV === 'production';
 const uploadDir = path.join(__dirname, '../public/uploads/articles');
-fs.ensureDirSync(uploadDir);
+
+try {
+  if (!isVercel) {
+    fs.ensureDirSync(uploadDir);
+  }
+} catch (e) {
+  // Ignorer sur Vercel
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDir);
+    if (isVercel) {
+      cb(null, '/tmp');
+    } else {
+      cb(null, uploadDir);
+    }
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
