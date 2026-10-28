@@ -37,9 +37,7 @@ router.post('/login', isGuest, async (req, res) => {
       role: user.role
     };
     
-    req.session.save(() => {
-      res.redirect('/dashboard');
-    });
+    res.redirect('/dashboard');
     return;
     
     try {

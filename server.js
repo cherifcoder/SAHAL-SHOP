@@ -39,7 +39,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
-  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: true, sameSite: 'none', httpOnly: true }
+  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: true, sameSite: 'lax', httpOnly: true }
 }));
 
 app.use(flash());
