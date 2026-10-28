@@ -67,7 +67,7 @@ router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'supera
   }
 });
 
-router.get('/journal', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), async (req, res) => {
+router.get('/journal', isAuthenticated, async (req, res) => {
   try {
     const mouvements = await MouvementStock.find()
       .populate('article')

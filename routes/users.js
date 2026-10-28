@@ -5,7 +5,7 @@ const { isAuthenticated } = require('../middlewares/auth');
 const { checkRole } = require('../middlewares/checkRole');
 const { logAction } = require('../middlewares/logger');
 
-router.get('/', isAuthenticated, checkRole('admin', 'superadmin'), async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 });
     res.render('users/index', { title: 'Gestion des Utilisateurs', users, user: req.session.user });
@@ -15,11 +15,17 @@ router.get('/', isAuthenticated, checkRole('admin', 'superadmin'), async (req, r
   }
 });
 
-router.get('/ajouter', isAuthenticated, checkRole('admin', 'superadmin'), (req, res) => {
+router.get('/ajouter', isAuthenticated, (req, res) => {
+  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
+    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
+  }
   res.render('users/add', { title: 'Ajouter un Utilisateur', user: req.session.user });
 });
 
-router.post('/ajouter', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'AJOUT_UTILISATEUR'), async (req, res) => {
+router.post('/ajouter', isAuthenticated, logAction('USERS', 'AJOUT_UTILISATEUR'), async (req, res) => {
+  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
+    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
+  }
   try {
     const { nom, prenom, username, email, telephone, password, role } = req.body;
     await User.create({ nom, prenom, username, email, telephone, password, role });
@@ -30,7 +36,10 @@ router.post('/ajouter', isAuthenticated, checkRole('admin', 'superadmin'), logAc
   }
 });
 
-router.get('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), async (req, res) => {
+router.get('/modifier/:id', isAuthenticated, async (req, res) => {
+  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
+    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
+  }
   try {
     const userEdit = await User.findById(req.params.id);
     res.render('users/edit', { title: 'Modifier un Utilisateur', userEdit, user: req.session.user });
@@ -40,7 +49,10 @@ router.get('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), a
   }
 });
 
-router.put('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'MODIFICATION_UTILISATEUR'), async (req, res) => {
+router.put('/modifier/:id', isAuthenticated, logAction('USERS', 'MODIFICATION_UTILISATEUR'), async (req, res) => {
+  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
+    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
+  }
   try {
     const userEdit = await User.findById(req.params.id);
     userEdit.nom = req.body.nom;
@@ -61,7 +73,10 @@ router.put('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), l
   }
 });
 
-router.delete('/supprimer/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'SUPPRESSION_UTILISATEUR'), async (req, res) => {
+router.delete('/supprimer/:id', isAuthenticated, logAction('USERS', 'SUPPRESSION_UTILISATEUR'), async (req, res) => {
+  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
+    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
+  }
   try {
     if (req.params.id === req.session.user.id) {
       return res.redirect('/users');

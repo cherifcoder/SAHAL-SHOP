@@ -7,7 +7,7 @@ const LigneVente = require('../models/LigneVente');
 const { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subMonths, subWeeks, subYears } = require('date-fns');
 
 const { checkRole } = require('../middlewares/checkRole');
-router.get('/', isAuthenticated, checkRole('admin', 'superadmin'), async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
     const today = new Date();
     const debutMois = startOfMonth(today);
