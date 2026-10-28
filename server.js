@@ -33,12 +33,13 @@ try {
   sessionStore = new session.MemoryStore();
 }
 
+app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET || 'sahalshop_secret_2026',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   store: sessionStore,
-  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: process.env.NODE_ENV === 'production', sameSite: 'none', httpOnly: true }
+  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: true, sameSite: 'none', httpOnly: true }
 }));
 
 app.use(flash());

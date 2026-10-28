@@ -37,10 +37,7 @@ router.post('/login', isGuest, async (req, res) => {
       role: user.role
     };
     
-    req.session.save((err) => {
-      if (err) {
-        return res.render('auth/login', { title: 'Connexion', error: 'Erreur session' });
-      }
+    req.session.save(() => {
       res.redirect('/dashboard');
     });
     return;
