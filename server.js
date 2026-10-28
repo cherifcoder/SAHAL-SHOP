@@ -38,8 +38,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'sahalshop_secret_2026',
   resave: false,
   saveUninitialized: false,
+  rolling: true,
   store: sessionStore,
-  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: true, sameSite: 'lax', httpOnly: true }
+  cookie: { maxAge: 1000 * 60 * 60 * 24 * 7, secure: true, sameSite: 'lax', httpOnly: true }
 }));
 
 app.use(flash());
