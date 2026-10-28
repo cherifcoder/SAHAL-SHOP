@@ -16,11 +16,11 @@ router.get('/', isAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/ajouter', isAuthenticated, checkRole('admin', 'manager'), (req, res) => {
+router.get('/ajouter', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), (req, res) => {
   res.render('depenses/add', { title: 'Ajouter une Dépense', user: req.session.user });
 });
 
-router.post('/ajouter', isAuthenticated, checkRole('admin', 'manager'), logAction('DEPENSES', 'AJOUT_DEPENSE'), async (req, res) => {
+router.post('/ajouter', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), logAction('DEPENSES', 'AJOUT_DEPENSE'), async (req, res) => {
   try {
     const { libelle, categorie, montant, beneficiaire, modePaiement, dateDepense, observations } = req.body;
     await Depense.create({
@@ -40,7 +40,7 @@ router.post('/ajouter', isAuthenticated, checkRole('admin', 'manager'), logActio
   }
 });
 
-router.delete('/supprimer/:id', isAuthenticated, checkRole('admin'), logAction('DEPENSES', 'SUPPRESSION_DEPENSE'), async (req, res) => {
+router.delete('/supprimer/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('DEPENSES', 'SUPPRESSION_DEPENSE'), async (req, res) => {
   try {
     await Depense.findByIdAndDelete(req.params.id);
     res.redirect('/depenses');

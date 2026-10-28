@@ -8,7 +8,7 @@
         <p>Liste, ajout, modification et gestion des produits</p>
       </div>
       <div class="topbar-right">
-        <% if(user.role === 'admin' || user.role === 'manager') { %>
+        <% if(user.role === 'admin' || user.role === 'manager' || user.role === 'superadmin') { %>
         <a href="/articles/ajouter" class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter un Article</a>
         <% } %>
         <div class="user-info">
@@ -69,10 +69,10 @@
                   </td>
                   <td>
                     <div class="actions">
-                      <% if(user.role === 'admin' || user.role === 'manager') { %>
+                      <% if(user.role === 'admin' || user.role === 'manager' || user.role === 'superadmin') { %>
                         <a href="/articles/modifier/<%= a._id %>" class="btn btn-warning" style="padding:6px 10px"><i class="fas fa-edit"></i></a>
                       <% } %>
-                      <% if(user.role === 'admin') { %>
+                      <% if(user.role === 'admin' || user.role === 'superadmin') { %>
                         <form action="/articles/supprimer/<%= a._id %>?_method=DELETE" method="POST" style="display:inline" onsubmit="return confirm('Supprimer cet article?')">
                           <button class="btn btn-danger" style="padding:6px 10px"><i class="fas fa-trash"></i></button>
                         </form>

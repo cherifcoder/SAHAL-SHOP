@@ -16,7 +16,7 @@ router.get('/', isAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/mouvement', isAuthenticated, checkRole('admin', 'manager'), async (req, res) => {
+router.get('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), async (req, res) => {
   try {
     const articles = await Article.find({ actif: true }).sort({ designation: 1 });
     res.render('stocks/mouvement', { title: 'Mouvement de Stock', articles, user: req.session.user });
@@ -26,7 +26,7 @@ router.get('/mouvement', isAuthenticated, checkRole('admin', 'manager'), async (
   }
 });
 
-router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager'), logAction('STOCK', 'MOUVEMENT_STOCK'), async (req, res) => {
+router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), logAction('STOCK', 'MOUVEMENT_STOCK'), async (req, res) => {
   try {
     const { articleId, typeMouvement, quantite, motif, reference } = req.body;
     const article = await Article.findById(articleId);
@@ -67,7 +67,7 @@ router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager'), logAct
   }
 });
 
-router.get('/journal', isAuthenticated, checkRole('admin', 'manager'), async (req, res) => {
+router.get('/journal', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), async (req, res) => {
   try {
     const mouvements = await MouvementStock.find()
       .populate('article')
