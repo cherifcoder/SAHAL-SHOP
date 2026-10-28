@@ -6,23 +6,19 @@ const connectDB = require('./config/db');
 const seedAdmin = async () => {
   try {
     await connectDB();
-    const exists = await User.findOne({ username: 'admin' });
-    if (exists) {
-      console.log('⚠️  Admin déjà existant');
-      process.exit();
-    }
+    await User.deleteOne({ username: 'admin' });
     await User.create({
       nom: 'SUPER',
       prenom: 'ADMIN',
       username: 'admin',
-      password: 'admin123',
-      role: 'admin',
-      email: 'admin@boutique.local',
+      password: 'admin123password4',
+      role: 'superadmin',
+      email: 'admin@sahalshop.local',
       actif: true
     });
-    console.log('✅ Admin créé avec succès!');
+    console.log('✅ SuperAdmin créé avec succès!');
     console.log('   Username: admin');
-    console.log('   Password: admin123');
+    console.log('   Password: admin123password4');
     process.exit();
   } catch (err) {
     console.error('❌ Erreur:', err.message);
