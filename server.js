@@ -35,10 +35,10 @@ try {
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'sahalshop_secret_2026',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   store: sessionStore,
-  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' }
+  cookie: { maxAge: 1000 * 60 * 60 * 8, secure: process.env.NODE_ENV === 'production', sameSite: 'none', httpOnly: true }
 }));
 
 app.use(flash());

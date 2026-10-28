@@ -11,10 +11,14 @@ router.get('/login', isGuest, (req, res) => {
 router.post('/login', isGuest, async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username, actif: true });
+    const user = await User.findOne({ username });
     
     if (!user) {
       return res.render('auth/login', { title: 'Connexion', error: 'Identifiants incorrects' });
+    }
+    
+    if (user.actif === false) {
+      return res.render('auth/login', { title: 'Connexion', error: 'Compte désactivé' });
     }
     
     const isMatch = await user.matchPassword(password);
@@ -32,6 +36,14 @@ router.post('/login', isGuest, async (req, res) => {
       username: user.username,
       role: user.role
     };
+    
+    req.session.save((err) => {
+      if (err) {
+        return res.render('auth/login', { title: 'Connexion', error: 'Erreur session' });
+      }
+      res.redirect('/dashboard');
+    });
+    return;
     
     try {
       await JournalAction.create({
