@@ -15,11 +15,11 @@ router.get('/', isAuthenticated, checkRole('admin', 'superadmin'), async (req, r
   }
 });
 
-router.get('/ajouter', isAuthenticated, checkRole('admin'), (req, res) => {
+router.get('/ajouter', isAuthenticated, checkRole('admin', 'superadmin'), (req, res) => {
   res.render('users/add', { title: 'Ajouter un Utilisateur', user: req.session.user });
 });
 
-router.post('/ajouter', isAuthenticated, checkRole('admin'), logAction('USERS', 'AJOUT_UTILISATEUR'), async (req, res) => {
+router.post('/ajouter', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'AJOUT_UTILISATEUR'), async (req, res) => {
   try {
     const { nom, prenom, username, email, telephone, password, role } = req.body;
     await User.create({ nom, prenom, username, email, telephone, password, role });
@@ -30,7 +30,7 @@ router.post('/ajouter', isAuthenticated, checkRole('admin'), logAction('USERS', 
   }
 });
 
-router.get('/modifier/:id', isAuthenticated, checkRole('admin'), async (req, res) => {
+router.get('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), async (req, res) => {
   try {
     const userEdit = await User.findById(req.params.id);
     res.render('users/edit', { title: 'Modifier un Utilisateur', userEdit, user: req.session.user });
@@ -40,7 +40,7 @@ router.get('/modifier/:id', isAuthenticated, checkRole('admin'), async (req, res
   }
 });
 
-router.put('/modifier/:id', isAuthenticated, checkRole('admin'), logAction('USERS', 'MODIFICATION_UTILISATEUR'), async (req, res) => {
+router.put('/modifier/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'MODIFICATION_UTILISATEUR'), async (req, res) => {
   try {
     const userEdit = await User.findById(req.params.id);
     userEdit.nom = req.body.nom;
@@ -61,7 +61,7 @@ router.put('/modifier/:id', isAuthenticated, checkRole('admin'), logAction('USER
   }
 });
 
-router.delete('/supprimer/:id', isAuthenticated, checkRole('admin'), logAction('USERS', 'SUPPRESSION_UTILISATEUR'), async (req, res) => {
+router.delete('/supprimer/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('USERS', 'SUPPRESSION_UTILISATEUR'), async (req, res) => {
   try {
     if (req.params.id === req.session.user.id) {
       return res.redirect('/users');
