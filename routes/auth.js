@@ -29,38 +29,61 @@ router.post('/login', isGuest, async (req, res) => {
     user.derniereConnexion = Date.now();
     await user.save();
     
-    req.session.user = {
-      id: user._id,
-      nom: user.nom,
-      prenom: user.prenom,
-      username: user.username,
-      role: user.role
-    };
-    
-    res.redirect('/dashboard');
-    return;
-    
-    try {
-      await JournalAction.create({
-        utilisateur: user._id,
-        nomUtilisateur: user.prenom + ' ' + user.nom,
-        action: 'CONNEXION',
-        module: 'AUTH',
-        details: 'Connexion au système',
-        ip: req.ip
+    req.session.regenerate((err) => {
+      if (err) {
+        return res.render('auth/login', { title: 'Connexion', error: 'Erreur session' });
+      }
+      req.session.user = {
+        id: user._id,
+        nom: user.nom,
+        prenom: user.prenom,
+        username: user.username,
+        role: user.role
+      };
+      req.session.save(async () => {
+        try {
+          await JournalAction.create({
+            utilisateur: user._id,
+            nomUtilisateur: (user.prenom || '') + ' ' + (user.nom || '') + ' (' + user.username + ')',
+            action: 'CONNEXION',
+            module: 'AUTH',
+            details: 'Connexion au système',
+            ip: req.ip || (req.headers && req.headers['x-forwarded-for']) || '',
+            userAgent: req.get ? req.get('User-Agent') : ''
+          });
+        } catch (e) {
+          console.error('Erreur log connexion:', e.message);
+        }
+        res.redirect('/dashboard');
       });
-    } catch(e) {}
-    
-    res.redirect('/dashboard');
+    });
+    return;
   } catch (err) {
     console.error(err);
     res.render('auth/login', { title: 'Connexion', error: 'Erreur serveur' });
   }
 });
 
-router.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/auth/login');
+router.get('/logout', async (req, res) => {
+  const user = req.session.user;
+  try {
+    if (user) {
+      await JournalAction.create({
+        utilisateur: user.id,
+        nomUtilisateur: (user.prenom || '') + ' ' + (user.nom || '') + ' (' + user.username + ')',
+        action: 'DECONNEXION',
+        module: 'AUTH',
+        details: 'Déconnexion du système',
+        ip: req.ip || (req.headers && req.headers['x-forwarded-for']) || '',
+        userAgent: req.get ? req.get('User-Agent') : ''
+      });
+    }
+  } catch (e) {
+    console.error('Erreur log déconnexion:', e.message);
+  }
+  req.session.destroy(() => {
+    res.redirect('/auth/login');
+  });
 });
 
 module.exports = router;
