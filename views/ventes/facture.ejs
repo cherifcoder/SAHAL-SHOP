@@ -259,7 +259,18 @@
         @media print {
             body { background: white; padding: 0; }
             .actions-print { display: none; }
-            .invoice-container { box-shadow: none; }
+            .invoice-container { box-shadow: none; width: 100%; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .invoice-container { width: 100%; overflow-x: auto; }
+            .header-bg { padding: 25px 20px 70px 20px; }
+            .header-top { flex-direction: column; gap: 15px; }
+            .invoice-info { flex-direction: column; gap: 15px; }
+            .content-area { padding: 0 15px; }
+            .table-header, .table-row { grid-template-columns: 40px 1fr 80px 50px 80px; font-size: 10px; padding: 10px; }
+            .bottom-section { flex-direction: column; gap: 20px; }
+            .left-notes, .totals-area { width: 100%; }
         }
     </style>
 </head>
@@ -275,14 +286,10 @@
         <div class="header-bg">
             <div class="header-top">
                 <div class="logo-area">
-                    <div class="logo-dots">
-                        <span></span><span></span><span></span>
-                        <span></span><span></span><span></span>
-                        <span></span><span></span><span></span>
-                    </div>
+                    <img src="/img/logo.jpeg" alt="SAHAL SHOP" style="width:60px;height:60px;border-radius:50%;background:white;padding:2px;object-fit:cover">
                     <div class="brand-text">
-                        <h1>GESTION BOUTIQUE</h1>
-                        <p>PRO</p>
+                        <h1>SAHAL SHOP</h1>
+                        <p>GESTION</p>
                     </div>
                 </div>
                 <div class="contact-details">
