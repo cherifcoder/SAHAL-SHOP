@@ -1,15 +1,4 @@
 function loadDashboard() {
-    const currentUser = getCurrentUser();
-    if (!currentUser) return;
-    
-    // Afficher le nom de l'utilisateur
-    document.getElementById('userName').textContent = currentUser.prenom + ' ' + currentUser.nom + ' (' + currentUser.role + ')';
-    
-    // Afficher la section admin si l'utilisateur est admin
-    if (currentUser.role === 'admin') {
-        document.getElementById('adminSection').style.display = 'block';
-    }
-    
     // Charger les statistiques
     loadStatistics();
     

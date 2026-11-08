@@ -1,12 +1,4 @@
 function loadArticlesPage() {
-    const currentUser = getCurrentUser();
-    if (!currentUser) return;
-    
-    document.getElementById('userName').textContent = currentUser.prenom + ' ' + currentUser.nom + ' (' + currentUser.role + ')';
-    
-    if (currentUser.role === 'admin') {
-        document.getElementById('adminSection').style.display = 'block';
-    }
     
     loadArticles();
 }

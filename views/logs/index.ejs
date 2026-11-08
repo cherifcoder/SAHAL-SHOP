@@ -1,0 +1,47 @@
+<%- include('../partials/header', {title: title}) %>
+<div class="app-container">
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Journal d'activité</h1>
+        <p>200 dernières actions enregistrées</p>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fas fa-history"></i> Historique des actions</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date/Heure</th>
+              <th>Module</th>
+              <th>Action</th>
+              <th>Détails</th>
+              <th>Adresse IP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(logs && logs.length > 0) { %>
+              <% logs.forEach(l => { %>
+                <tr>
+                  <td><%= l.dateAction ? l.dateAction.toLocaleString('fr-FR') : '-' %></td>
+                  <td><span class="badge badge-info"><%= l.module %></span></td>
+                  <td><strong><%= l.action %></strong></td>
+                  <td><%= l.details || '-' %></td>
+                  <td><%= l.ip || '-' %></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr><td colspan="5" style="text-align:center;padding:40px">Aucune action enregistrée</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

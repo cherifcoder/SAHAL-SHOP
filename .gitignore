@@ -17,7 +17,7 @@ public/uploads/
 public/factures/
 
 # Logs
-logs/
+/logs/
 *.log
 
 # OS

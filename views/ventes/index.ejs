@@ -23,7 +23,6 @@
               <th>N° Facture</th>
               <th>Date</th>
               <th>Client</th>
-              <th>Vendeur</th>
               <th>Type</th>
               <th>Total</th>
               <th>Statut</th>
@@ -37,7 +36,6 @@
                   <td><strong><%= v.numeroFacture %></strong></td>
                   <td><%= v.dateVente.toLocaleString('fr-FR') %></td>
                   <td><%= v.client ? (v.client.prenom + ' ' + v.client.nom) : 'Anonyme' %></td>
-                  <td><%= v.vendeur ? (v.vendeur.prenom + ' ' + v.vendeur.nom) : '-' %></td>
                   <td><span class="badge <%= v.typeVente === 'CREDIT' ? 'badge-warning' : 'badge-success' %>"><%= v.typeVente %></span></td>
                   <td><%= v.total.toLocaleString() %> FCFA</td>
                   <td><span class="badge badge-success"><%= v.statut %></span></td>
@@ -48,7 +46,7 @@
                 </tr>
               <% }) %>
             <% } else { %>
-              <tr><td colspan="8" style="text-align:center;padding:40px">Aucune vente</td></tr>
+              <tr><td colspan="7" style="text-align:center;padding:40px">Aucune vente</td></tr>
             <% } %>
           </tbody>
         </table>

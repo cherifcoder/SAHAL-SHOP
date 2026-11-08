@@ -1,10 +1,10 @@
-const CACHE_NAME = 'gest-boutique-v1';
+const CACHE_NAME = 'gest-boutique-v2';
 const urlsToCache = [
   '/',
   '/css/style.css',
   '/css/mobile.css',
   '/js/mobile-menu.js',
-  '/auth/login'
+  '/dashboard'
 ];
 
 self.addEventListener('install', event => {

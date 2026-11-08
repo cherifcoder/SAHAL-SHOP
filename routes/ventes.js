@@ -6,33 +6,32 @@ const Article = require('../models/Article');
 const Client = require('../models/Client');
 const Credit = require('../models/Credit');
 const MouvementStock = require('../models/MouvementStock');
-const { isAuthenticated } = require('../middlewares/auth');
 const { logAction } = require('../middlewares/logger');
 const { generateInvoiceNumber } = require('../utils/helpers');
 const { genererFacture } = require('../utils/facture');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const ventes = await Vente.find().sort({ dateVente: -1 }).populate('client').populate('vendeur');
-    res.render('ventes/index', { title: 'Historique des Ventes', ventes, user: req.session.user });
+    const ventes = await Vente.find().sort({ dateVente: -1 }).populate('client');
+    res.render('ventes/index', { title: 'Historique des Ventes', ventes });
   } catch (err) {
     console.error(err);
     res.redirect('/dashboard');
   }
 });
 
-router.get('/nouvelle', isAuthenticated, async (req, res) => {
+router.get('/nouvelle', async (req, res) => {
   try {
     const articles = await Article.find({ actif: true, stockActuel: { $gt: 0 } });
     const clients = await Client.find({ actif: true });
-    res.render('ventes/nouvelle', { title: 'Nouvelle Vente', articles, clients, user: req.session.user });
+    res.render('ventes/nouvelle', { title: 'Nouvelle Vente', articles, clients });
   } catch (err) {
     console.error(err);
     res.redirect('/dashboard');
   }
 });
 
-router.post('/nouvelle', isAuthenticated, logAction('VENTES', 'NOUVELLE_VENTE'), async (req, res) => {
+router.post('/nouvelle', logAction('VENTES', 'NOUVELLE_VENTE'), async (req, res) => {
   try {
     const { clientId, typeVente, modePaiement, lignes, remise } = req.body;
     
@@ -88,7 +87,6 @@ router.post('/nouvelle', isAuthenticated, logAction('VENTES', 'NOUVELLE_VENTE'),
     const vente = await Vente.create({
       numeroFacture,
       client: clientId || null,
-      vendeur: req.session.user.id,
       typeVente,
       sousTotal,
       remise: remiseMontant,
@@ -119,7 +117,6 @@ router.post('/nouvelle', isAuthenticated, logAction('VENTES', 'NOUVELLE_VENTE'),
         stockApres: article.stockActuel,
         motif: 'Vente',
         reference: numeroFacture,
-        effectuePar: req.session.user.id,
         vente: vente._id
       });
     }
@@ -149,22 +146,22 @@ router.post('/nouvelle', isAuthenticated, logAction('VENTES', 'NOUVELLE_VENTE'),
   }
 });
 
-router.get('/facture/:id', isAuthenticated, async (req, res) => {
+router.get('/facture/:id', async (req, res) => {
   try {
-    const vente = await Vente.findById(req.params.id).populate('client').populate('vendeur');
+    const vente = await Vente.findById(req.params.id).populate('client');
     const lignes = await LigneVente.find({ vente: vente._id });
-    res.render('ventes/facture', { title: 'Facture', vente, lignes, user: req.session.user });
+    res.render('ventes/facture', { title: 'Facture', vente, lignes });
   } catch (err) {
     console.error(err);
     res.redirect('/ventes');
   }
 });
 
-router.get('/facture/pdf/:id', isAuthenticated, async (req, res) => {
+router.get('/facture/pdf/:id', async (req, res) => {
   try {
-    const vente = await Vente.findById(req.params.id).populate('client').populate('vendeur');
+    const vente = await Vente.findById(req.params.id).populate('client');
     const lignes = await LigneVente.find({ vente: vente._id });
-    const result = await genererFacture(vente, vente.client, lignes, vente.vendeur);
+    const result = await genererFacture(vente, vente.client, lignes);
     res.download(result.filepath, result.filename);
   } catch (err) {
     console.error(err);

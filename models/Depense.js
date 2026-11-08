@@ -6,7 +6,6 @@ const DepenseSchema = new mongoose.Schema({
   montant: { type: Number, required: true, min: 0 },
   beneficiaire: { type: String, trim: true },
   modePaiement: { type: String, enum: ['ESPECES', 'MOBILE_MONEY', 'CARTE', 'CHEQUE', 'AUTRE'], default: 'ESPECES' },
-  effectuePar: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   dateDepense: { type: Date, default: Date.now },
   justificatif: { type: String },
   observations: { type: String, trim: true },

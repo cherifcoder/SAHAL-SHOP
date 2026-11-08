@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-exports.genererFacture = (vente, client, lignes, vendeur) => {
+exports.genererFacture = (vente, client, lignes) => {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
     const filename = `facture-${vente.numeroFacture}.pdf`;
@@ -76,9 +76,7 @@ exports.genererFacture = (vente, client, lignes, vendeur) => {
     y += 60;
     doc.fillColor('#333333').fontSize(9).font('Helvetica-Bold').text('INFORMATIONS', 50, y);
     y += 15;
-    doc.font('Helvetica').text('Vendeur: ' + (vendeur ? vendeur.prenom + ' ' + vendeur.nom : '-'), 50, y);
-    y += 12;
-    doc.text('Mode de paiement: ' + vente.modePaiement, 50, y);
+    doc.font('Helvetica').text('Mode de paiement: ' + vente.modePaiement, 50, y);
     y += 12;
     doc.text('Type: ' + vente.typeVente, 50, y);
     

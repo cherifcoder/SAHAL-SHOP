@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middlewares/auth');
 const Vente = require('../models/Vente');
 const Depense = require('../models/Depense');
 const LigneVente = require('../models/LigneVente');
 const { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subMonths, subWeeks, subYears } = require('date-fns');
 
-const { checkRole } = require('../middlewares/checkRole');
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const today = new Date();
     const debutMois = startOfMonth(today);
@@ -33,20 +31,18 @@ router.get('/', isAuthenticated, async (req, res) => {
       beneficeMois,
       totalDepenses,
       beneficeNet: beneficeMois - totalDepenses,
-      nbVentes: ventesMois.length,
-      user: req.session.user
+      nbVentes: ventesMois.length
     });
   } catch (err) {
     console.error(err);
     res.render('rapports/index', {
       title: 'Rapports & Graphiques',
-      caMois: 0, beneficeMois: 0, totalDepenses: 0, beneficeNet: 0, nbVentes: 0,
-      user: req.session.user
+      caMois: 0, beneficeMois: 0, totalDepenses: 0, beneficeNet: 0, nbVentes: 0
     });
   }
 });
 
-router.get('/details/benefice', isAuthenticated, async (req, res) => {
+router.get('/details/benefice', async (req, res) => {
   try {
     const today = new Date();
     const debutMois = startOfMonth(today);
@@ -66,25 +62,25 @@ router.get('/details/benefice', isAuthenticated, async (req, res) => {
         });
       }
     }
-    res.render('rapports/details-benefice', { title: 'Détail du Bénéfice', details, user: req.session.user });
+    res.render('rapports/details-benefice', { title: 'Détail du Bénéfice', details });
   } catch (err) {
     res.redirect('/rapports');
   }
 });
 
-router.get('/details/ca', isAuthenticated, async (req, res) => {
+router.get('/details/ca', async (req, res) => {
   try {
     const today = new Date();
     const debutMois = startOfMonth(today);
     const finMois = endOfMonth(today);
-    const ventes = await Vente.find({ dateVente: { $gte: debutMois, $lte: finMois }, statut: 'VALIDEE' }).populate('client').populate('vendeur').sort({ dateVente: -1 });
-    res.render('rapports/details-ca', { title: 'Détail du Chiffre d\'affaires', ventes, user: req.session.user });
+    const ventes = await Vente.find({ dateVente: { $gte: debutMois, $lte: finMois }, statut: 'VALIDEE' }).populate('client').sort({ dateVente: -1 });
+    res.render('rapports/details-ca', { title: 'Détail du Chiffre d\'affaires', ventes });
   } catch (err) {
     res.redirect('/rapports');
   }
 });
 
-router.get('/details/benefice-net', isAuthenticated, async (req, res) => {
+router.get('/details/benefice-net', async (req, res) => {
   try {
     const today = new Date();
     const debutMois = startOfMonth(today);
@@ -99,13 +95,13 @@ router.get('/details/benefice-net', isAuthenticated, async (req, res) => {
     }
     const depenses = await Depense.find({ dateDepense: { $gte: debutMois, $lte: finMois } });
     const totalDepenses = depenses.reduce((sum, d) => sum + d.montant, 0);
-    res.render('rapports/details-benefice-net', { title: 'Détail Bénéfice Net', beneficeBrut, totalDepenses, beneficeNet: beneficeBrut - totalDepenses, depenses, user: req.session.user });
+    res.render('rapports/details-benefice-net', { title: 'Détail Bénéfice Net', beneficeBrut, totalDepenses, beneficeNet: beneficeBrut - totalDepenses, depenses });
   } catch (err) {
     res.redirect('/rapports');
   }
 });
 
-router.get('/api/ventes', isAuthenticated, async (req, res) => {
+router.get('/api/ventes', async (req, res) => {
   try {
     const today = new Date();
     let debut, fin;

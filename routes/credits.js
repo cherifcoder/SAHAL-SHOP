@@ -3,35 +3,33 @@ const router = express.Router();
 const Credit = require('../models/Credit');
 const Client = require('../models/Client');
 const Remboursement = require('../models/Remboursement');
-const { isAuthenticated } = require('../middlewares/auth');
-const { checkRole } = require('../middlewares/checkRole');
 const { logAction } = require('../middlewares/logger');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const credits = await Credit.find({ statut: { $in: ['OUVERT', 'PARTIEL'] } })
       .populate('client')
       .populate('vente')
       .sort({ createdAt: -1 });
-    res.render('credits/index', { title: 'Crédits Clients', credits, user: req.session.user });
+    res.render('credits/index', { title: 'Crédits Clients', credits });
   } catch (err) {
     console.error(err);
     res.redirect('/dashboard');
   }
 });
 
-router.get('/rembourser/:id', isAuthenticated, checkRole('admin', 'manager', 'caissier'), async (req, res) => {
+router.get('/rembourser/:id', async (req, res) => {
   try {
     const credit = await Credit.findById(req.params.id).populate('client').populate('vente');
-    const remboursements = await Remboursement.find({ credit: credit._id }).populate('recuPar').sort({ dateRemboursement: -1 });
-    res.render('credits/rembourser', { title: 'Rembourser un crédit', credit, remboursements, user: req.session.user });
+    const remboursements = await Remboursement.find({ credit: credit._id }).sort({ dateRemboursement: -1 });
+    res.render('credits/rembourser', { title: 'Rembourser un crédit', credit, remboursements });
   } catch (err) {
     console.error(err);
     res.redirect('/credits');
   }
 });
 
-router.post('/rembourser/:id', isAuthenticated, checkRole('admin', 'manager', 'caissier'), logAction('CREDITS', 'REMBOURSEMENT'), async (req, res) => {
+router.post('/rembourser/:id', logAction('CREDITS', 'REMBOURSEMENT'), async (req, res) => {
   try {
     const credit = await Credit.findById(req.params.id).populate('client');
     const montant = parseFloat(req.body.montant);
@@ -46,7 +44,6 @@ router.post('/rembourser/:id', isAuthenticated, checkRole('admin', 'manager', 'c
       client: credit.client._id,
       montant,
       modePaiement,
-      recuPar: req.session.user.id,
       observations
     });
     

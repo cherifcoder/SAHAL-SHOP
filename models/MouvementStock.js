@@ -8,7 +8,6 @@ const MouvementStockSchema = new mongoose.Schema({
   stockApres: { type: Number, required: true },
   motif: { type: String, required: true, trim: true },
   reference: { type: String, trim: true },
-  effectuePar: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   vente: { type: mongoose.Schema.Types.ObjectId, ref: 'Vente' },
   dateMouvement: { type: Date, default: Date.now }
 });

@@ -1,32 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middlewares/auth');
-const { checkRole } = require('../middlewares/checkRole');
 const Article = require('../models/Article');
 const MouvementStock = require('../models/MouvementStock');
 const { logAction } = require('../middlewares/logger');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const articles = await Article.find({ actif: true }).sort({ designation: 1 });
-    res.render('stocks/index', { title: 'Gestion des Stocks', articles, user: req.session.user });
+    res.render('stocks/index', { title: 'Gestion des Stocks', articles });
   } catch (err) {
     console.error(err);
     res.redirect('/dashboard');
   }
 });
 
-router.get('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), async (req, res) => {
+router.get('/mouvement', async (req, res) => {
   try {
     const articles = await Article.find({ actif: true }).sort({ designation: 1 });
-    res.render('stocks/mouvement', { title: 'Mouvement de Stock', articles, user: req.session.user });
+    res.render('stocks/mouvement', { title: 'Mouvement de Stock', articles });
   } catch (err) {
     console.error(err);
     res.redirect('/stocks');
   }
 });
 
-router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), logAction('STOCK', 'MOUVEMENT_STOCK'), async (req, res) => {
+router.post('/mouvement', logAction('STOCK', 'MOUVEMENT_STOCK'), async (req, res) => {
   try {
     const { articleId, typeMouvement, quantite, motif, reference } = req.body;
     const article = await Article.findById(articleId);
@@ -56,8 +54,7 @@ router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'supera
       stockAvant,
       stockApres,
       motif,
-      reference,
-      effectuePar: req.session.user.id
+      reference
     });
     
     res.redirect('/stocks');
@@ -67,14 +64,14 @@ router.post('/mouvement', isAuthenticated, checkRole('admin', 'manager', 'supera
   }
 });
 
-router.get('/journal', isAuthenticated, async (req, res) => {
+router.get('/journal', async (req, res) => {
   try {
     const mouvements = await MouvementStock.find()
       .populate('article')
-      .populate('effectuePar')
+      
       .sort({ dateMouvement: -1 })
       .limit(300);
-    res.render('stocks/journal', { title: 'Journal des Mouvements de Stock', mouvements, user: req.session.user });
+    res.render('stocks/journal', { title: 'Journal des Mouvements de Stock', mouvements });
   } catch (err) {
     console.error(err);
     res.redirect('/stocks');

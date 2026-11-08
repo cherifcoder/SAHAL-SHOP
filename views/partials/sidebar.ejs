@@ -18,14 +18,9 @@
     <a href="/stocks" class="menu-item"><i class="fas fa-warehouse"></i> <span>Stocks</span></a>
     <a href="/stocks/journal" class="menu-item"><i class="fas fa-clipboard-list"></i> <span>Journal Mouvements</span></a>
     <a href="/depenses" class="menu-item"><i class="fas fa-money-bill-wave"></i> <span>Dépenses</span></a>
-    <% if(user && (user.role === 'admin' || user.role === 'superadmin')) { %>
-      <div class="menu-section">ANALYSE</div>
-      <a href="/rapports" class="menu-item"><i class="fas fa-chart-line"></i> <span>Rapports & Graphiques</span></a>
-    <% } %>
-    <% if(user && (user.role === 'admin' || user.role === 'superadmin')) { %>
-      <div class="menu-section">ADMINISTRATION</div>
-      <a href="/users" class="menu-item"><i class="fas fa-user-cog"></i> <span>Utilisateurs</span></a>
-      <a href="/logs" class="menu-item"><i class="fas fa-history"></i> <span>Journalisation</span></a>
-    <% } %>
+    <div class="menu-section">ANALYSE</div>
+    <a href="/rapports" class="menu-item"><i class="fas fa-chart-line"></i> <span>Rapports & Graphiques</span></a>
+    <div class="menu-section">SYSTÈME</div>
+    <a href="/logs" class="menu-item"><i class="fas fa-history"></i> <span>Journalisation</span></a>
   </nav>
 </aside>

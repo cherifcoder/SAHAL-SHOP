@@ -28,7 +28,6 @@
               <th>Stock Après</th>
               <th>Motif</th>
               <th>Référence</th>
-              <th>Effectué par</th>
             </tr>
           </thead>
           <tbody>
@@ -53,11 +52,10 @@
                   <td><%= m.stockApres %></td>
                   <td><%= m.motif %></td>
                   <td><%= m.reference || '-' %></td>
-                  <td><%= m.effectuePar ? (m.effectuePar.prenom + ' ' + m.effectuePar.nom) : '-' %></td>
                 </tr>
               <% }) %>
             <% } else { %>
-              <tr><td colspan="9" style="text-align:center;padding:40px">Aucun mouvement</td></tr>
+              <tr><td colspan="8" style="text-align:center;padding:40px">Aucun mouvement</td></tr>
             <% } %>
           </tbody>
         </table>

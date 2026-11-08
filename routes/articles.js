@@ -1,26 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const Article = require('../models/Article');
-const { isAuthenticated } = require('../middlewares/auth');
-const { checkRole } = require('../middlewares/checkRole');
 const upload = require('../middlewares/upload');
 const { logAction } = require('../middlewares/logger');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const articles = await Article.find().sort({ createdAt: -1 });
-    res.render('articles/index', { title: 'Gestion des Articles', articles, user: req.session.user });
+    res.render('articles/index', { title: 'Gestion des Articles', articles });
   } catch (err) {
     console.error(err);
     res.redirect('/dashboard');
   }
 });
 
-router.get('/ajouter', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), (req, res) => {
-  res.render('articles/add', { title: 'Ajouter un Article', user: req.session.user });
+router.get('/ajouter', (req, res) => {
+  res.render('articles/add', { title: 'Ajouter un Article' });
 });
 
-router.post('/ajouter', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), upload.array('images', 5), logAction('ARTICLES', 'AJOUT_ARTICLE'), async (req, res) => {
+router.post('/ajouter', upload.array('images', 5), logAction('ARTICLES', 'AJOUT_ARTICLE'), async (req, res) => {
   try {
     let { reference, designation, description, categorie, marque, prixAchat, prixVente, stockActuel, stockMin, unite, fournisseur, emplacement } = req.body;
     
@@ -58,17 +56,17 @@ router.post('/ajouter', isAuthenticated, checkRole('admin', 'manager', 'superadm
   }
 });
 
-router.get('/modifier/:id', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), async (req, res) => {
+router.get('/modifier/:id', async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
-    res.render('articles/edit', { title: 'Modifier un Article', article, user: req.session.user });
+    res.render('articles/edit', { title: 'Modifier un Article', article });
   } catch (err) {
     console.error(err);
     res.redirect('/articles');
   }
 });
 
-router.put('/modifier/:id', isAuthenticated, checkRole('admin', 'manager', 'superadmin'), upload.array('images', 5), logAction('ARTICLES', 'MODIFICATION_ARTICLE'), async (req, res) => {
+router.put('/modifier/:id', upload.array('images', 5), logAction('ARTICLES', 'MODIFICATION_ARTICLE'), async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     const { reference, designation, description, categorie, marque, prixAchat, prixVente, stockMin, unite, fournisseur, emplacement, actif } = req.body;
@@ -99,7 +97,7 @@ router.put('/modifier/:id', isAuthenticated, checkRole('admin', 'manager', 'supe
   }
 });
 
-router.delete('/supprimer/:id', isAuthenticated, checkRole('admin', 'superadmin'), logAction('ARTICLES', 'SUPPRESSION_ARTICLE'), async (req, res) => {
+router.delete('/supprimer/:id', logAction('ARTICLES', 'SUPPRESSION_ARTICLE'), async (req, res) => {
   try {
     await Article.findByIdAndDelete(req.params.id);
     res.redirect('/articles');

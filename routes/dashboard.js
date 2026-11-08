@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middlewares/auth');
 const Vente = require('../models/Vente');
 const Article = require('../models/Article');
 const Client = require('../models/Client');
@@ -9,7 +8,7 @@ const Depense = require('../models/Depense');
 const LigneVente = require('../models/LigneVente');
 const { startOfDay, endOfDay, startOfMonth, endOfMonth } = require('date-fns');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const today = new Date();
     const debutJour = startOfDay(today);
@@ -47,12 +46,10 @@ router.get('/', isAuthenticated, async (req, res) => {
     const ventesRecentes = await Vente.find({ statut: 'VALIDEE' })
       .sort({ dateVente: -1 })
       .limit(5)
-      .populate('client')
-      .populate('vendeur');
+      .populate('client');
     
     res.render('dashboard/index', {
       title: 'Tableau de Bord',
-      user: req.session.user,
       caJour,
       caMois,
       beneficeJour,
@@ -71,7 +68,6 @@ router.get('/', isAuthenticated, async (req, res) => {
     console.error(err);
     res.render('dashboard/index', {
       title: 'Tableau de Bord',
-      user: req.session.user,
       caJour: 0, caMois: 0, beneficeJour: 0, beneficeNetMois: 0,
       nbVentesJour: 0, nbVentesMois: 0, nbArticles: 0, nbClients: 0,
       totalCreances: 0, stockFaible: 0, valeurStock: 0,

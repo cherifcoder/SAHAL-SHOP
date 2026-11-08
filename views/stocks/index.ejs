@@ -8,14 +8,8 @@
         <p>État, inventaire et alertes</p>
       </div>
       <div class="topbar-right">
-        <% if(user.role === 'admin' || user.role === 'manager' || user.role === 'superadmin') { %>
-          <a href="/stocks/mouvement" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Mouvement de Stock</a>
-          <a href="/stocks/journal" class="btn btn-info"><i class="fas fa-clipboard-list"></i> Journal</a>
-        <% } %>
-        <div class="user-info">
-          <i class="fas fa-user-circle"></i>
-          <span><%= user.prenom %> <%= user.nom %> - <%= user.role.toUpperCase() %></span>
-        </div>
+        <a href="/stocks/mouvement" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Mouvement de Stock</a>
+        <a href="/stocks/journal" class="btn btn-info"><i class="fas fa-clipboard-list"></i> Journal</a>
       </div>
     </header>
 

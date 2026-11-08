@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const JournalAction = require('../models/JournalAction');
-const { isAuthenticated } = require('../middlewares/auth');
-const { checkRole } = require('../middlewares/checkRole');
 
-router.get('/', isAuthenticated, async (req, res) => {
-  if (req.session.user.role !== 'admin' && req.session.user.role !== 'superadmin') {
-    return res.status(403).render('errors/403', { title: 'Accès refusé', user: req.session.user });
-  }
+router.get('/', async (req, res) => {
   try {
     let logs = [];
     try {
@@ -18,7 +13,7 @@ router.get('/', isAuthenticated, async (req, res) => {
     } catch (e) {
       logs = [];
     }
-    res.render('logs/index', { title: 'Journal d\'activité', logs, user: req.session.user });
+    res.render('logs/index', { title: 'Journal d\'activité', logs });
   } catch (err) {
     console.error('Erreur logs:', err.message);
     return res.status(500).send('Erreur serveur');
